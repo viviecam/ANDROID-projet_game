@@ -1,0 +1,7 @@
+#Thu Feb 08 17:14:48 CET 2018
+base.0=/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_77296598e175e038e678020fd7554a2a276e5a8c
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_3a77c6f262e12139141ca0f091ed6a78238c05b6/classes.dex
+base.1=/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_3a77c6f262e12139141ca0f091ed6a78238c05b6
+file.0=/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_77296598e175e038e678020fd7554a2a276e5a8c/classes.dex

@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/Users/bozonpee/.android/build-cache/612578db9680736db880de238addc8a9964d8049/output/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/Users/bozonpee/.android/build-cache/612578db9680736db880de238addc8a9964d8049/output/res/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/drawable-v21/notification_action_background.xml",
+        "source": "/Users/bozonpee/.android/build-cache/752a769bb51b69a3098e76290c951842ff4087be/output/res/drawable-v21/notification_action_background.xml"
+    },
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/Users/bozonpee/.android/build-cache/612578db9680736db880de238addc8a9964d8049/output/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    }
+]

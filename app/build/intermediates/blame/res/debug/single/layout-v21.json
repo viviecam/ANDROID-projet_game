@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/layout-v21/notification_action.xml",
+        "source": "/Users/bozonpee/.android/build-cache/752a769bb51b69a3098e76290c951842ff4087be/output/res/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/layout-v21/notification_template_custom_big.xml",
+        "source": "/Users/bozonpee/.android/build-cache/752a769bb51b69a3098e76290c951842ff4087be/output/res/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/layout-v21/notification_action_tombstone.xml",
+        "source": "/Users/bozonpee/.android/build-cache/752a769bb51b69a3098e76290c951842ff4087be/output/res/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "/Users/bozonpee/AndroidStudioProjects/canvasAccelerometer/app/build/intermediates/res/merged/debug/layout-v21/notification_template_icon_group.xml",
+        "source": "/Users/bozonpee/.android/build-cache/752a769bb51b69a3098e76290c951842ff4087be/output/res/layout-v21/notification_template_icon_group.xml"
+    }
+]
