@@ -1,9 +1,13 @@
 package com.example.bozonpee.canvasaccelerometer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -23,11 +27,13 @@ import static android.hardware.Sensor.TYPE_GRAVITY;
 
 
 public class Main extends AppCompatActivity implements SensorEventListener {
-
+    //Initialisation de notre canvas
     private CanvasView canvas;
-    private int circleRadius = 30;
-    private float circleX;
-    private float circleY;
+
+    //Initialisation de notre point qui sera dans le canevas
+    private int circleRadius = 30; //Diamètre
+    private float circleX; //Position sur l'axe X
+    private float circleY; //Position sur l'axe Y
 
 
     private Timer timer;
@@ -41,6 +47,9 @@ public class Main extends AppCompatActivity implements SensorEventListener {
     private float sensorY;
     private float sensorZ;
     private long lastSensorUpdateTime = 0;
+
+
+
 
 
     @Override
@@ -71,9 +80,11 @@ public class Main extends AppCompatActivity implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {}
 
-
+    //Canvas
     private class CanvasView extends View {
         private Paint pen;
+
+        Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.clouds);
 
         public CanvasView(Context context) {
             super(context);
@@ -89,10 +100,25 @@ public class Main extends AppCompatActivity implements SensorEventListener {
             pen.setTextSize(30f);
 
 
+            //Canvas background
+            //screen.drawColor(Color.MAGENTA);
+            screen.drawBitmap(background, 0, 0, pen);
+
+            //screen.drawPicture(background);
+
+            //Génération du point
             screen.drawCircle(circleX, circleY, circleRadius, pen);
+
+            screen.drawLine(600, 600, 800, 600, pen);
+
         }
 
     }
+
+    //Fonction de génération du personnage (point)
+    //public void generateCharacter() {
+
+    //}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +134,10 @@ public class Main extends AppCompatActivity implements SensorEventListener {
         Point size = new Point();
         display.getSize(size);
 
-        int screenWhidth = size.x;
+        int screenWidth = size.x;
         int screenHeight = size.y;
 
-        circleX = screenWhidth / 2 - circleRadius;
+        circleX = screenWidth / 2 - circleRadius;
         circleY = screenHeight / 2 - circleRadius;
 
         canvas = new CanvasView(Main.this);
