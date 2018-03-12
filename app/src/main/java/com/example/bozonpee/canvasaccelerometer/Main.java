@@ -131,9 +131,13 @@ public class Main extends AppCompatActivity implements SensorEventListener {
 
 
             //Génération des plateformes de dim 100x40
+            for (int k = 0; k < plateforms.size(); k++) {
+                //On récupère la plateforme courante dans la liste (comme si listeProvisoire[j] sur un tableau)
+                Plateform currentItem = plateforms.get(k);
+                screen.drawBitmap(plateformimg, currentItem.getPlateformX() , currentItem.getPlateformY(), plateformPen);
+            }
             //for (int k = 0; k <= nbPlateforms-1; k++) {
-              //  screen.drawBitmap(plateformimg, plateforms[k].getPlateformX() , plateforms[k].getPlateformY(), plateformPen);
-            //}
+            //screen.drawBitmap(plateformimg, plateforms[k].getPlateformX() , plateforms[k].getPlateformY(), plateformPen);
 
             //screen.drawLine(600, 600, 800, 600, pen);
 
@@ -205,7 +209,7 @@ public class Main extends AppCompatActivity implements SensorEventListener {
 
         while (i <= nbPlateforms-1) {
             boolean invalidCoordonate = false;
-
+            Log.d("DEBUG","I =" + i);
             //On génère un nombre aléatoire entre les valeurs des coordonées (largeur et hauteur) de la zone
             //ou l'on veut rajouter des plateformes
             //Moins la longueur (100) et épaisseur(40) d'une plateforme
@@ -236,7 +240,7 @@ public class Main extends AppCompatActivity implements SensorEventListener {
                 }
 
                 //Si on a pas trouvé de point de contact avec une autre plateform
-                if (invalidCoordonate = false) {
+                if (invalidCoordonate == false) {
                     //Alors on ajoute la nouvelle plateforme avec les coordonnées générés, au tableau plateforms
                 /*plateforms[i].setPlateformX(randomX);
                 plateforms[i].setPlateformY(randomY);*/
