@@ -1,5 +1,7 @@
 package com.example.bozonpee.canvasaccelerometer;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +21,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.animation.ValueAnimator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +48,9 @@ public class Main extends AppCompatActivity implements SensorEventListener {
     private float circleX; //Position sur l'axe X
     private float circleY; //Position sur l'axe Y
 
+    private float jackX; //Position sur l'axe X
+    private float jackY; //Position sur l'axe Y
+
     //Liste de Plateformes
     private List<Plateform> plateforms;
 
@@ -64,7 +72,6 @@ public class Main extends AppCompatActivity implements SensorEventListener {
     private float sensorY;
     private float sensorZ;
     private long lastSensorUpdateTime = 0;
-
 
 
 
@@ -102,8 +109,10 @@ public class Main extends AppCompatActivity implements SensorEventListener {
         private Paint characterPen;
         private Paint plateformPen;
 
+        // Chargement des images
         Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.clouds);
         Bitmap plateformimg = BitmapFactory.decodeResource(getResources(), R.drawable.trampoline);
+        Bitmap jack = BitmapFactory.decodeResource(getResources(), R.drawable.body);
 
         public CanvasView(Context context) {
             super(context);
@@ -127,8 +136,10 @@ public class Main extends AppCompatActivity implements SensorEventListener {
             screen.drawBitmap(background, 0, 0, characterPen);
 
             //Génération du point
-            screen.drawCircle(circleX, circleY, circleRadius, characterPen);
+            //screen.drawCircle(circleX, circleY, circleRadius, characterPen);
 
+            // Génération de jack
+            screen.drawBitmap(jack, jackX, jackY, characterPen);
 
             //Génération des plateformes de dim 100x40
             for (int k = 0; k < plateforms.size(); k++) {
@@ -136,12 +147,26 @@ public class Main extends AppCompatActivity implements SensorEventListener {
                 Plateform currentItem = plateforms.get(k);
                 screen.drawBitmap(plateformimg, currentItem.getPlateformX() , currentItem.getPlateformY(), plateformPen);
             }
+
+
+
             //for (int k = 0; k <= nbPlateforms-1; k++) {
             //screen.drawBitmap(plateformimg, plateforms[k].getPlateformX() , plateforms[k].getPlateformY(), plateformPen);
 
             //screen.drawLine(600, 600, 800, 600, pen);
 
         }
+        //private void createAnimation() {
+
+
+          //  Animation animator = new TranslateAnimation( 0, 0, 0, -screenHeight/3);
+          //  animator.setDuration(500);
+          //  animator.setFillAfter(true);
+          //  jack.startAnimation(animator);
+          //  jack.setVisibility(0);
+
+
+        //}
 
     }
 
@@ -175,10 +200,17 @@ public class Main extends AppCompatActivity implements SensorEventListener {
         //On appelle la fonction pour générer les plateformes, en lui passant les paramètres nécéssaires
         //Et on stocke le retour de cette fonction, dans notre liste de plateformes
         plateforms = generatePlateformsPositions(10, 0, 0, screenWidth, screenHeight);
+        //plateforms.sort();
 
-        //On place le personnage (point) au center de l'écran
-        circleX = screenWidth / 2 - circleRadius;
-        circleY = screenHeight / 2 - circleRadius;
+        //On place le cercle (point) au center de l'écran
+        //circleX = screenWidth / 2 - circleRadius;
+        //circleY = screenHeight / 2 - circleRadius;
+
+        //On place jack au centre de l'écran
+        jackX = screenWidth / 2;
+        jackY = screenHeight / 2;
+
+        //createAnimation();
 
         canvas = new CanvasView(Main.this);
         setContentView(canvas);
@@ -281,30 +313,50 @@ public class Main extends AppCompatActivity implements SensorEventListener {
 
     //Fonction pour faire bouger le personnage
     public void moveCharacter() {
+        //if (sensorX > 1 && sensorX < 3) {
+        //  circleX -= 5;
+            //}
+        //if (sensorX < -1 && sensorX > -3) {
+            //circleX += 5;
+            //}
+
+        //if (sensorX < -3 && sensorX > -15) {
+            //circleX += 15;
+            //}
+
+        //if (sensorX > 3 && sensorX < 15 ) {
+        //    circleX -= 15;
+        //}
+
+        // faire bouger jack sur l'axe des X
         if (sensorX > 1 && sensorX < 3) {
-            circleX -= 5;
+            jackX -= 5;
         }
         if (sensorX < -1 && sensorX > -3) {
-            circleX += 5;
+            jackX += 5;
         }
 
         if (sensorX < -3 && sensorX > -15) {
-            circleX += 15;
+            jackX += 15;
         }
 
         if (sensorX > 3 && sensorX < 15 ) {
-            circleX -= 15;
+            jackX -= 15;
         }
 
-
-        /*if(sensorY < 0) {
-            circleY -= 15;
-        } else {
-            circleY += 15;
-        }*/
-        //circleX--;
         handler.sendEmptyMessage(0);
+
+
+
+
     }
+
+
+
+
+
+
+
 }
 
 
