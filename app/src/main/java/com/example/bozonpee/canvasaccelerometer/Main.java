@@ -14,9 +14,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -24,6 +26,7 @@ import android.view.View;
 import android.animation.ValueAnimator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,12 +198,65 @@ public class Main extends AppCompatActivity implements SensorEventListener {
 
         //On stocke séparement la largeur et la hauteur de l'écran
         screenWidth = screenSize.x;
-        screenHeight = screenSize.y;
+        screenHeight = screenSize.y - 80;
+        // Moins la hauteur de 2 plateformes, pour laisser la place pour la ligne de
+        // plateformes créée au départ de chaque jeu.
+
+
+
+        // On récupère les coordonnées du layout principal
+
+        //ConstraintLayout mainLayout = (ConstraintLayout)findViewById(R.id.mainlayout);
+        //ViewTreeObserver vto = mainLayout.getViewTreeObserver();
+        //vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        //@Override
+        //public void onGlobalLayout() {
+        //  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+        //   this.mainLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        // } else {
+        //       this.mainLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        //  }
+        //    int width  = mainLayout.getMeasuredWidth();
+        //      int height = mainLayout.getMeasuredHeight();
+
+        //    }
+        //};
+
+        //ConstraintLayout mainLayout = (ConstraintLayout)findViewById(R.id.mainlayout);
+
+
+        //float x = view.getX();
+        //float y = view.getY();
+
+        //View contentsView = findViewById(android.R.id.content);
+
+        //int test1[] = new int[2];
+        //contentsView.getLocationInWindow(test1);
+
+        //int test2[] = new int[2];
+        //contentsView.getLocationOnScreen(test2);
+
+        //System.out.println(test1[1] + " " + test2[1]);
+
+        //return super.dispatchTouchEvent(ev);
+        //
+        ConstraintLayout mainLayout = findViewById(R.id.mainlayout);
+
+        int mainViewLocationScreen[] = new int[2];
+        int mainViewLocationWindow[] = new int[2];
+        mainLayout.getLocationOnScreen(mainViewLocationScreen);
+        mainLayout.getLocationInWindow(mainViewLocationWindow);
+        System.out.println("Screen : " + mainViewLocationScreen[0] + " / " + mainViewLocationScreen[1]);
+        System.out.println("Window : " + mainViewLocationWindow[0] + " / " + mainViewLocationWindow[1]);
+        System.out.println("Test : " + mainLayout.getMaxHeight() + " " + mainLayout.getMinHeight());
+
+
 
         //On appelle la fonction pour générer les plateformes, en lui passant les paramètres nécéssaires
         //Et on stocke le retour de cette fonction, dans notre liste de plateformes
-        plateforms = generatePlateformsPositions(10, 0, 0, screenWidth, screenHeight);
-        //plateforms.sort();
+        plateforms = generatePlateformsPositions(0, 0, 0, screenWidth, screenHeight);
+        // On ajoute un ligne complète de plateformes en bas de l'écran, pour le départ du jeu
+        plateforms.add(new Plateform(0, screenHeight-170));
 
         //On place le cercle (point) au center de l'écran
         //circleX = screenWidth / 2 - circleRadius;
@@ -227,11 +283,9 @@ public class Main extends AppCompatActivity implements SensorEventListener {
             //@Override
 
         //}, 0, 100);
-
-
-
-
     }
+
+
 
     //Fonction pour générer les coordonnées de départ de dessin des plateformes
     public List<Plateform> generatePlateformsPositions(int nbPlateforms, int minX, int minY, int maxX, int maxY) {
