@@ -175,7 +175,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         // Chargement des images
         Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.fond);
         Bitmap plateformimg = BitmapFactory.decodeResource(getResources(), R.drawable.plateforme);
-        Bitmap jack = BitmapFactory.decodeResource(getResources(), R.drawable.verdi);
+        Bitmap jack = BitmapFactory.decodeResource(getResources(), R.drawable.body);
 
         public CanvasView(Context context) {
             super(context);

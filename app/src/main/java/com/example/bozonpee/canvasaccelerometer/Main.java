@@ -1,43 +1,84 @@
 package com.example.bozonpee.canvasaccelerometer;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.RectF;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.animation.ValueAnimator;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.view.ViewTreeObserver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+public class Main extends AppCompatActivity {
 
-import static android.hardware.Sensor.TYPE_GRAVITY;
+    /** Au chargement de l'application **/
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // On charge la vue main
+        setContentView(R.layout.main);
+    }
+
+    /** Called when the user taps the Start Game Button */
+    public void startGameActivity(View view) {
+        Intent game = new Intent(this, Game.class);
+
+        // On récupère la zone de jeu de l'application (tout l'ecran, sauf la bar d'outil du téléphone,
+        // la bar de menu de l'application, et eventuellement la bar du bas)
+        ConstraintLayout Layout = findViewById(R.id.mainlayout);
+
+        // On récupère le point de départ de la zone, en haut à gauche
+        //int topLeftCoor_Screen[] = new int[2];
+        // int topLeftCoor[0] = coordonnée x
+        // int topLeftCoor[1] = coordonnée y
+        //Layout.getLocationOnScreen(topLeftCoor_Screen);
+        //System.out.println("Screen : " + topLeftCoor_Screen[0] + " / " + topLeftCoor_Screen[1]);
+
+        // AVEC WINDOW AU LIEU DE SCREEN
+        int topLeftCoor_Window[] = new int[2];
+        Layout.getLocationInWindow(topLeftCoor_Window);
+        //System.out.println("Window : " + topLeftCoor_Window[0] + " / " + topLeftCoor_Window[1]);
+
+        // On récupère la hauteur de l'écran
+        int layoutHeight = Layout.getHeight();
+        System.out.println("Height : " + layoutHeight);
+
+        // On en déduit les coordonnées verticaux de la zone de jeu, ceux à ne jamais dépasser
+        int yMin = topLeftCoor_Window[1];
+        int yMax = topLeftCoor_Window[1] + layoutHeight;
+        //System.out.println("yMin est " + yMin + " et yMax est " + yMax);
 
 
+        // On passe les deux valeurs dans notre intent
+        game.putExtra("yMinimum", yMin);
+        game.putExtra("yMaximum", yMax);
+
+        // On démarre la nouvelle activité en ayant envoyé les valeurs yMin et yMax
+        startActivity(game);
+    }
+
+    /*@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_activity);
+    }
+
+    public void goToAnActivity(View view) {
+        Intent Intent = new Intent(this, AnActivity.class);
+        startActivity(Intent);
+    }*/
+
+
+    /*createAppointment.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(your_context, CreateAppointment.class);
+            startActivity(intent);
+        }
+    });*/
+
+
+    /*
 public class Main extends AppCompatActivity implements SensorEventListener {
+
+
     //Valeurs de la taille de l'écran courant
     private int screenWidth;
     private int screenHeight;
@@ -330,7 +371,7 @@ public class Main extends AppCompatActivity implements SensorEventListener {
                     //Alors on ajoute la nouvelle plateforme avec les coordonnées générés, au tableau plateforms
                 /*plateforms[i].setPlateformX(randomX);
                 plateforms[i].setPlateformY(randomY);*/
-                    listeProvisoire.add(new Plateform(randomX, randomY));
+                    /*listeProvisoire.add(new Plateform(randomX, randomY));
                     // Et on passe à la case suivante du tableau
                     i++;
                 }
@@ -407,7 +448,7 @@ public class Main extends AppCompatActivity implements SensorEventListener {
 
 
 
-
+*/
 
 
 
