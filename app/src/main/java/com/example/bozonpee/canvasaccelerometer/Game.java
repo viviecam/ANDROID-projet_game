@@ -1,6 +1,7 @@
 package com.example.bozonpee.canvasaccelerometer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
+import android.view.View;
 
 /**
  * Created by Camille on 19/03/2018.
@@ -52,7 +54,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     private int nbPlatforms;
 
     //Mouvement de Jack
-    Bitmap jack;
+    private Bitmap jack;
     private String perso;
     private int jackX;
     private int jackY;
@@ -62,11 +64,14 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     //"Pas" du rebond, initilialisé à -15 pour qu'il commence par monter
     private int dir_y = -15;
     //Hauteur du saut
-    int jumpHeight;
+    private int jumpHeight;
     //Point de départ du saut
-    int startingPointJumpY;
+    private int startingPointJumpY;
     //Booléen pour savoir si jack est, à un instant T, en train de monter ou de descendre
-    boolean isGoingDown;
+    private boolean isGoingDown;
+
+    //Score
+    private int score;
 
     //Sensor
     private Timer timer;
@@ -77,15 +82,9 @@ public class Game extends AppCompatActivity implements SensorEventListener {
 
     private long lastSensorUpdateTime = 0;
 
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
-        wakeLock.acquire();
-    }*/
-
-    /** AU CHARGEMENT DE L'ACTIVITE **/
+    /**
+     * AU CHARGEMENT DE L'ACTIVITE
+     **/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +92,9 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         // On charge la vue game
         setContentView(R.layout.game);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // On initialise le score du joueur à 0
+        score = 0;
 
         // On gère les paramètres du senso
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -125,7 +127,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         // (les coordonnées de la zone à ne pas dépasser, et on enlève 2 fois la hauteur d'une plateforme 2x30
         // pour laisser la place pour la ligne de plateforme du départ)
         // Et on stocke le retour de cette fonction, dans notre liste de plateformes
-        plateforms = generatePlateformsPositions(10, minX, minY, maxX, maxY-360);
+        plateforms = generatePlateformsPositions(5, minX, minY, maxX, maxY - 360);
 
         // Ligne de plateformes de départ
         // On calcule le nombre de plateformes qui rentre dans la largeur de l'écran
@@ -133,11 +135,11 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         // On initialise la valeur qui sera rajoutée au X pour décaler chaque plateforme d'une longeur de plateforme
         int next = 0;
         // Pour le nombre de plateformes calculé plus haut, + 1 (car on part de 0)
-        for (int j=0; j<=nbPlatformOnStart; j++ ) {
+        for (int j = 0; j <= nbPlatformOnStart; j++) {
             // On ajoute une plateforme dans notre tableau de plateforme
-            plateforms.add(new Plateform(minX + next, maxY-300));
+            plateforms.add(new Plateform(minX + next, maxY - 300));
             // On décale la plateforme suivante d'une longueur de plateforme
-            next = next+ 200;
+            next = next + 200;
         }
 
         /** INITIALISATION DE JACK **/
@@ -155,7 +157,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         // Jack fait 64 de large, donc on décale de 64*2/2 = 32 pour que son milieu soit au milieu de l'écran
         jackX = (maxX / 2) - 64;
         // Et à 360 plus haut que le bas de la zone de jeu
-        jackY = maxY-360;
+        jackY = maxY - 360;
         // On stocke cette valeur de Y comme valeur de base de notre saut
         startingPointJumpY = jackY;
 
@@ -165,7 +167,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
 
         //Au lancement, calcul de la hauteur de saut de jack (moitié de la zone de jeu, en fonction de l'écran courant donc)
         int layoutHeight = getIntent().getIntExtra("layoutHeight", 0);
-        jumpHeight = layoutHeight/2;
+        jumpHeight = layoutHeight / 2;
         //System.out.println("Point de départ du saut : " + startingPointJumpY + " et jump height : " + jumpHeight);
 
         canvas = new Game.CanvasView(Game.this);
@@ -211,9 +213,12 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {}
+    public void onAccuracyChanged(Sensor sensor, int i) {
+    }
 
-    /** Canvas **/
+    /**
+     * Canvas
+     **/
     private class CanvasView extends View {
         private Paint characterPen;
         private Paint platformPen;
@@ -253,10 +258,10 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             //Si jack a atteint la motié de l'écran (sa hauteur de saut, ENLEVEE à son point de départ, car on va vers le haut)
             //on veut qu'il redescende, donc on lui ajoute 15
             if (jackY <= startingPointJumpY - jumpHeight) {
-            //if (jackY <= canvas.getHeight()/2) {
+                //if (jackY <= canvas.getHeight()/2) {
                 dir_y = 15;
                 isGoingDown = true;
-                System.out.println("Prout " + startingPointJumpY);
+                //System.out.println("Prout " + startingPointJumpY);
             }
 
             // Si jack est en train de descendre, alors on vérifie qu'il ne rencontre pas de plateforme sur son passage
@@ -270,16 +275,21 @@ public class Game extends AppCompatActivity implements SensorEventListener {
                     // auquel on ajoute 160 car la hauteur de jack est de 100, en prenant un peu de marge en plus
                     // ce qui donne l'impression qu'il rebondit sur la platforme
                     startingPointJumpY = newStartingPointJumpY - 200;
-                    System.out.println(newStartingPointJumpY);
-                    System.out.println(startingPointJumpY);
+                    //System.out.println(newStartingPointJumpY);
+                    //System.out.println(startingPointJumpY);
                     //Jack a atteint une plateforme en descendant, on veut donc qu'il remonte, donc on lui enlève 15
                     dir_y = -15;
                     isGoingDown = false;
 
                     //On appelle la fonction hasJumpedOnPlateform, qui va faire défiler le fond et gérer la création de nouvelles plateformes
                     //En lui passant en paramètre, le y de la plaeform sur laquelle à été fait le rebond
-                    //hasJumpedOnPlateform(newStartingPointJumpY);
+                    hasJumpedOnPlateform(newStartingPointJumpY);
                 }
+            }
+
+            // On vérifie si jack est tombé en bas en dehors de l'écran
+            if (jackY >= maxY) {
+                isGameOver();
             }
 
             /*int newJackY = characterMeetsPlatform(jackX, jackY);
@@ -314,7 +324,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             for (int k = 0; k < plateforms.size(); k++) {
                 //On récupère la plateforme courante dans la liste (comme si listeProvisoire[j] sur un tableau)
                 Plateform currentItem = plateforms.get(k);
-                screen.drawBitmap(plateformimg, currentItem.getPlateformX() , currentItem.getPlateformY(), platformPen);
+                screen.drawBitmap(plateformimg, currentItem.getPlateformX(), currentItem.getPlateformY(), platformPen);
                 //int x = currentItem.getPlateformX();
                 //int y = currentItem.getPlateformY();
                 //System.out.println(x + "-" + y);
@@ -326,7 +336,23 @@ public class Game extends AppCompatActivity implements SensorEventListener {
 
     }
 
-    /** FONCTION QUI VERIFIE SI JACK REBONDI SUR UNE PLATFORME**/
+
+    /**
+     * FONCTION QUI GERE LA FIN DU JEU
+     **/
+    public void isGameOver() {
+        Intent result = new Intent(this, Result.class);
+
+        // On passe la valeur du score dans notre intent
+        result.putExtra("score", score);
+
+        // On démarre la nouvelle activité Result
+        startActivity(result);
+    }
+
+    /**
+     * FONCTION QUI VERIFIE SI JACK REBONDI SUR UNE PLATFORME
+     **/
     public int characterMeetsPlatform(int Xjack, int Yjack) {
         int newStartingPointForJump = -10;
         for (int k = 0; k < plateforms.size(); k++) {
@@ -338,32 +364,37 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             //System.out.println("Jack : "+ Xjack + " / " + Yjack );
             //On vérifie si le point en bas à gauche de jack (Y+100)
             //if (currentPlatform.getPlateformY() == Yjack+100
-            if ((Yjack+100) >= yPlatform && (Yjack+100) < (yPlatform + 15) && Xjack >= (xPlatform-64) && Xjack <= (xPlatform +136)
-            //if (yPlatform != (Yjack+100) && Xjack >= (xPlatform-1) && Xjack <= (xPlatform +1)
-            ) {
-            //if (yPlatform == Yjack+100 && Xjack >= xPlatform - 32 && Xjack <= xPlatform + 168 ) {
+            if ((Yjack + 100) >= yPlatform && (Yjack + 100) < (yPlatform + 15) && Xjack >= (xPlatform - 64) && Xjack <= (xPlatform + 136)
+                //if (yPlatform != (Yjack+100) && Xjack >= (xPlatform-1) && Xjack <= (xPlatform +1)
+                    ) {
+                //if (yPlatform == Yjack+100 && Xjack >= xPlatform - 32 && Xjack <= xPlatform + 168 ) {
                 // On considère que jack rebondi si il a au moins la moitié de son corps sur la platform,
                 // d'ou -64*2 à gauche et +200 - 64*2 à droite
                 //System.out.println("Le if marche !");
-                System.out.println("Jack a rebondi sur la plateforme ayant pour X : " + xPlatform + " et pour Y : " + yPlatform);
-
+                //System.out.println("Jack a rebondi sur la plateforme ayant pour X : " + xPlatform + " et pour Y : " + yPlatform);
                 newStartingPointForJump = yPlatform;
                 // On enlève 160 car jack fait 100 de hauteur + un peu de marge
                 //newStartingPointForJump = yPlatform-160;
+
+                // On ajoute 1 au score
+                score = score + 1;
+                System.out.println(score);
                 return newStartingPointForJump;
             }
         }
         return newStartingPointForJump;
     }
 
-    /** Fonction pour générer les coordonnées de départ de dessin des plateformes **/
+    /**
+     * Fonction pour générer les coordonnées de départ de dessin des plateformes
+     **/
     // On donne les limites de la zone de jeu
     public List<Plateform> generatePlateformsPositions(int nbPlatforms, int minX, int minY, int maxX, int maxY) {
         int i = 0;
         //Nouvelle liste dans la zone ou l'on veut créer les plateformes
         List<Plateform> listeProvisoire = new ArrayList<>();
 
-        while (i <= nbPlatforms-1) {
+        while (i <= nbPlatforms - 1) {
             boolean invalidCoordonate = false;
             //Log.d("DEBUG","I =" + i);
             //On génère un nombre aléatoire entre les valeurs des coordonées (largeur et hauteur) de la zone
@@ -389,7 +420,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
                     // Reminder : le x et le y de chaque plateforme correspond à son point de départ en haut à gauche
                     if (randomX >= item.getPlateformX() + 200 && randomX <= item.getPlateformX() - 200
                             && randomY >= item.getPlateformY() + 70 && randomX <= item.getPlateformY() - 70) {
-                        System.out.println("trouvé");
+                        //System.out.println("trouvé");
                         invalidCoordonate = true;
                         //On a trouvé une plateforme qui est déjà au même endroit, donc on sort de la boucle for
                         break;
@@ -426,8 +457,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     }
 
 
-
-    public void hasJumpedOnPlateform(int YplatformJumped){
+    public void hasJumpedOnPlateform(int YplatformJumped) {
         //Ligne de base définie à 360
         //Récupérer la hauteur entre le bas de l'écran (ou la ligne de base!) et la position y de la plateform sur laquelle le
         //personnage a rebondi : H
@@ -437,7 +467,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
 
         //On veut ensuite appliquer cette différence à toutes les plateformes visibles, et donc donner l'impression de monter
         //Et effacer dans le tableau plateforms, les plateformes qui sortent en bas de l'écran
-        for (int k = 0; k < plateforms.size(); k++) {
+        /*for (int k = 0; k < plateforms.size(); k++) {
             //On récupère la plateforme courante dans la liste (comme si listeProvisoire[j] sur un tableau)
             Plateform currentPlatform = plateforms.get(k);
             //Si le y de la plateform courante est supérieur ou égal (donc qu'elle est visuellement en dessous)
@@ -453,42 +483,44 @@ public class Game extends AppCompatActivity implements SensorEventListener {
                 // On lui ajoute la valeur de la différence heightDiff pour donner l'impression de la faire descendre
                 currentPlatform.setPlateformY(currentPlatform.getPlateformY() + heightDif);
             }
-        }
+        }*/
         // et on applique la différence à jack également
         //startingPointJumpY = startingPointJumpY + heightDif -360 ;
 
         // Puis on veut générer de nouvelles plateformes sur la zone en haut de l'écran qui vient d'apparaitre
-        plateforms = generatePlateformsPositions(nbPlateformsDeleted, minX, minY, maxX, minY+heightDif-360);
+        plateforms = generatePlateformsPositions(5, minX, minY, maxX, maxY);
+        //plateforms = generatePlateformsPositions(nbPlateformsDeleted, minX, minY, maxX, minY+heightDif-360);
 
     }
 
 
-
-    /** Fonction pour faire bouger le personnage avec le sensor **/
+    /**
+     * Fonction pour faire bouger le personnage avec le sensor
+     **/
     public void moveCharacter() {
         // Paliers en fonction de l'inclinaison que donne l'user sur le device
         if (sensorX > 1 && sensorX < 3) {
-            if (jackX > 5){
+            if (jackX > 5) {
                 jackX -= 5;
             }
         }
 
         if (sensorX < -1 && sensorX > -3) {
-            if (jackX < maxX-150){
+            if (jackX < maxX - 150) {
                 jackX += 5;
             }
         }
 
         if (sensorX < -3) {
-            if (jackX < maxX-150){
+            if (jackX < maxX - 150) {
                 jackX += 15;
             } else {
-                jackX = maxX-150;
+                jackX = maxX - 150;
             }
         }
 
-        if (sensorX > 3 ) {
-            if (jackX > 15){
+        if (sensorX > 3) {
+            if (jackX > 15) {
                 jackX -= 15;
             } else {
                 jackX = 5;
