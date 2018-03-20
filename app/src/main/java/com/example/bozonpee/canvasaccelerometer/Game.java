@@ -166,7 +166,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         //Au lancement, calcul de la hauteur de saut de jack (moitié de la zone de jeu, en fonction de l'écran courant donc)
         int layoutHeight = getIntent().getIntExtra("layoutHeight", 0);
         jumpHeight = layoutHeight/2;
-        System.out.println("Point de départ du saut : " + startingPointJumpY + " et jump height : " + jumpHeight);
+        //System.out.println("Point de départ du saut : " + startingPointJumpY + " et jump height : " + jumpHeight);
 
         canvas = new Game.CanvasView(Game.this);
         setContentView(canvas);
@@ -243,20 +243,20 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             // A chaque appel de la fonction onDraw, on bouge jack de +/- 15
             jackY = jackY + dir_y;
 
-            // Si jack a atteint le bas (le point de départ de son saut), on veut qu'il remonte, donc on lui enlève 15
+
             //if (jackY >= canvas.getHeight()-200){
-            if (jackY >= startingPointJumpY ){
+            /*if (jackY >= startingPointJumpY ){
                 dir_y = -15;
                 isGoingDown = false;
-            }
+            }*/
 
             //Si jack a atteint la motié de l'écran (sa hauteur de saut, ENLEVEE à son point de départ, car on va vers le haut)
             //on veut qu'il redescende, donc on lui ajoute 15
             if (jackY <= startingPointJumpY - jumpHeight) {
             //if (jackY <= canvas.getHeight()/2) {
-                System.out.println("il redescend!");
                 dir_y = 15;
                 isGoingDown = true;
+                System.out.println("Prout " + startingPointJumpY);
             }
 
             // Si jack est en train de descendre, alors on vérifie qu'il ne rencontre pas de plateforme sur son passage
@@ -266,8 +266,16 @@ public class Game extends AppCompatActivity implements SensorEventListener {
                 // Si la valeur retournée est différente de -10, cela veut dire qu'une plateforme a été rencontrée
                 // Et que la valeur Y de cette plateforme a été retournée
                 if (newStartingPointJumpY != -10) {
-                    //On relance un nouveau saut à partir de ce nouveau point, ce qui donne l'impression qu'il rebondit sur la platforme
-                    startingPointJumpY = newStartingPointJumpY;
+                    //On relance un nouveau saut à partir de ce nouveau point,
+                    // auquel on ajoute 160 car la hauteur de jack est de 100, en prenant un peu de marge en plus
+                    // ce qui donne l'impression qu'il rebondit sur la platforme
+                    startingPointJumpY = newStartingPointJumpY - 200;
+                    System.out.println(newStartingPointJumpY);
+                    System.out.println(startingPointJumpY);
+                    //Jack a atteint une plateforme en descendant, on veut donc qu'il remonte, donc on lui enlève 15
+                    dir_y = -15;
+                    isGoingDown = false;
+
                     //On appelle la fonction hasJumpedOnPlateform, qui va faire défiler le fond et gérer la création de nouvelles plateformes
                     //En lui passant en paramètre, le y de la plaeform sur laquelle à été fait le rebond
                     //hasJumpedOnPlateform(newStartingPointJumpY);
@@ -339,11 +347,12 @@ public class Game extends AppCompatActivity implements SensorEventListener {
                 //System.out.println("Le if marche !");
                 System.out.println("Jack a rebondi sur la plateforme ayant pour X : " + xPlatform + " et pour Y : " + yPlatform);
 
-                newStartingPointForJump = yPlatform-160;
+                newStartingPointForJump = yPlatform;
+                // On enlève 160 car jack fait 100 de hauteur + un peu de marge
+                //newStartingPointForJump = yPlatform-160;
                 return newStartingPointForJump;
             }
         }
-        //dir_y = -15;
         return newStartingPointForJump;
     }
 
