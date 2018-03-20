@@ -38,7 +38,7 @@ public class Main extends AppCompatActivity {
 
         // On récupère la hauteur de l'écran
         int layoutHeight = Layout.getHeight();
-        System.out.println("Height : " + layoutHeight);
+        //System.out.println("Height : " + layoutHeight);
 
         // On en déduit les coordonnées verticaux de la zone de jeu, ceux à ne jamais dépasser
         int yMin = topLeftCoor_Window[1];
@@ -49,6 +49,7 @@ public class Main extends AppCompatActivity {
         // On passe les deux valeurs dans notre intent
         game.putExtra("yMinimum", yMin);
         game.putExtra("yMaximum", yMax);
+        game.putExtra("layoutHeight", layoutHeight);
 
         // On démarre la nouvelle activité en ayant envoyé les valeurs yMin et yMax
         startActivity(game);
