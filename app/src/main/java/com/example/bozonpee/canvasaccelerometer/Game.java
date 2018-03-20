@@ -13,11 +13,14 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -72,6 +75,13 @@ public class Game extends AppCompatActivity implements SensorEventListener {
 
     private long lastSensorUpdateTime = 0;
 
+    /*@Override
+    protected void onResume() {
+        super.onResume();
+        PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
+        wakeLock.acquire();
+    }*/
 
     /** AU CHARGEMENT DE L'ACTIVITE **/
     @Override
@@ -79,6 +89,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         // On charge la vue game
         setContentView(R.layout.game);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // On gère les paramètres du senso
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -302,15 +313,19 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             //System.out.println("Y recup : " + Yjack);
             int xPlatform = currentPlatform.getPlateformX();
             int yPlatform = currentPlatform.getPlateformY();
-            //System.out.println("Current platform : "+ x + " / " + y );
+            System.out.println("Current platform : "+ xPlatform + " / " + yPlatform );
+            System.out.println("Jack : "+ Xjack + " / " + Yjack );
             //On vérifie si le point en bas à gauche de jack (Y+100)
             //if (currentPlatform.getPlateformY() == Yjack+100
-            if (yPlatform == Yjack+100 && Xjack >= xPlatform - 32 && Xjack <= xPlatform + 168 ) {
+            if (yPlatform != (Yjack+100) && Xjack >= (xPlatform - 128) && Xjack <= (xPlatform +168)
+            ) {
+            //if (yPlatform == Yjack+100 && Xjack >= xPlatform - 32 && Xjack <= xPlatform + 168 ) {
                 // On considère que jack rebondi si il a au moins la moitié de son corps sur la platform,
                 // d'ou -32 à gauche et +200 - 32 à droite
                 System.out.println("Le if marche !");
 
-                newStartingPointForJump = yPlatform;
+                newStartingPointForJump = yPlatform-160;
+                return newStartingPointForJump;
             }
         }
         return newStartingPointForJump;
