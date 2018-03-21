@@ -6,96 +6,110 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+/**
+ * <b>Main est la classe qui définie l'activité au lancement de l'application.</b>
+ * <p>
+ * Elle effectue quatre actions :
+ * <ul>
+ * <li>Elle charge la vue main.</li>
+ * <li>Elle récupère les coordonnées Y de la zone de jeu..</li>
+ * <li>En fonction du bouton sur lequel l'utilisateur clique, elle génère une information qui dicte quel icône utiliser pour le Jack.</li>
+ * <li>Enfin, elle transmet les informations sur les coordonnées de la zone de jeu, et sur l'icîne de Jack, à l'activité Game</li>
+ * </ul>
+ * </p>
+ *
+ * @author Elisa BOZON & Camille VIVIER
+ */
+
+
 public class Main extends AppCompatActivity {
 
-    /** Au chargement de l'application **/
+    /**
+     * Méthode appelée au chargement de l'activité Main.
+     * <p>Charge la vue main.</p>
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // On charge la vue main
         setContentView(R.layout.main);
     }
 
-    /** Called when the user taps the Verdillon button */
+    /**
+     * Méthode appelée au clic sur le bouton-image Verdillon.
+     * <p>
+     * Appelle la fonction calculateGameArea qui récupère les coordonnées Y de la zone de jeu.
+     * Récupère l'Intent qui stocke ces coordonées dans l'Intent gameVerdillon.
+     * Ajoute à l'Intent gameVerdillon, le paramètre de l'image de Jack.
+     * Démarre l'activité Game, en lui passant l'Intent gameVerdillon qui contient les paramètres de la zone de jeu et de l'image de Jack
+     *
+     * @param view
+     * @see Main#calculateGameArea()
+     */
     public void startGameActivityVerdi(View view) {
-        Intent game = new Intent(this, Game.class);
-
-        // On récupère la zone de jeu de l'application (tout l'ecran, sauf la bar d'outil du téléphone,
-        // la bar de menu de l'application, et eventuellement la bar du bas)
-        ConstraintLayout Layout = findViewById(R.id.mainlayout);
-
-        // On récupère le point de départ de la zone, en haut à gauche
-        //int topLeftCoor_Screen[] = new int[2];
-        // int topLeftCoor[0] = coordonnée x
-        // int topLeftCoor[1] = coordonnée y
-        //Layout.getLocationOnScreen(topLeftCoor_Screen);
-        //System.out.println("Screen : " + topLeftCoor_Screen[0] + " / " + topLeftCoor_Screen[1]);
-
-        // AVEC WINDOW AU LIEU DE SCREEN
-        int topLeftCoor_Window[] = new int[2];
-        Layout.getLocationInWindow(topLeftCoor_Window);
-        //System.out.println("Window : " + topLeftCoor_Window[0] + " / " + topLeftCoor_Window[1]);
-
-        // On récupère la hauteur de l'écran
-        int layoutHeight = Layout.getHeight();
-        //System.out.println("Height : " + layoutHeight);
-
-        // On en déduit les coordonnées verticaux de la zone de jeu, ceux à ne jamais dépasser
-        int yMin = topLeftCoor_Window[1];
-        int yMax = topLeftCoor_Window[1] + layoutHeight;
-        //System.out.println("yMin est " + yMin + " et yMax est " + yMax);
-
-
-        // On passe les deux valeurs dans notre intent
-        game.putExtra("yMinimum", yMin);
-        game.putExtra("yMaximum", yMax);
-        game.putExtra("layoutHeight", layoutHeight);
-        game.putExtra("id", "verdi");
-
-        // On démarre la nouvelle activité en ayant envoyé les valeurs yMin et yMax
-        startActivity(game);
+        Intent gameVerdillon = calculateGameArea();
+        gameVerdillon.putExtra("id", "verdillon");
+        startActivity(gameVerdillon);
     }
 
 
-    /** Called when the user taps the Deruyter button */
+    /**
+     * Méthode appelée au clic sur le bouton-image Deruyter.
+     * <p>
+     * Appelle la fonction calculateGameArea qui récupère les coordonnées Y de la zone de jeu.
+     * Récupère l'Intent qui stocke ces coordonées dans l'Intent gameDeruyter.
+     * Ajoute à l'Intent gameDeruyter, le paramètre de l'image de Jack.
+     * Démarre l'activité Game, en lui passant l'Intent gameVerdillon qui contient les paramètres de la zone de jeu et de l'image de Jack
+     *
+     * @param view
+     * @see Main#calculateGameArea()
+     */
     public void startGameActivityDeruyter(View view) {
-        Intent game = new Intent(this, Game.class);
+        Intent gameDeruyter = calculateGameArea();
+        gameDeruyter.putExtra("id", "deruyter");
+        startActivity(gameDeruyter);
+    }
 
-        // On récupère la zone de jeu de l'application (tout l'ecran, sauf la bar d'outil du téléphone,
-        // la bar de menu de l'application, et eventuellement la bar du bas)
+    /**
+     * Méthode qui calcule les coordonnées Ymin et Ymax de la zone de jeu.
+     * <p>Créé un intent. Récupère la mainlayout.</p>
+     * <p>Récupère le point de départ de la mainlayout avec getLocationInWindow ou getLocationOnScreen</p>
+     * <p>Récupère la hauteur de la mainlayout.</p>
+     * <p>Calcule le Ymax en ajoutant la hauteur de la mainLayout au Ymin</p>
+     * <p>Stocke Ymin, Ymax, layoutHeight dans l'intent, et retourne l'intent.</p>
+     *
+     * @return L'Itent contenant les paramètres de la zone de jeu
+     */
+    public Intent calculateGameArea() {
+        Intent intent = new Intent(this, Game.class);
         ConstraintLayout Layout = findViewById(R.id.mainlayout);
 
-        // On récupère le point de départ de la zone, en haut à gauche
-        //int topLeftCoor_Screen[] = new int[2];
-        // int topLeftCoor[0] = coordonnée x
-        // int topLeftCoor[1] = coordonnée y
-        //Layout.getLocationOnScreen(topLeftCoor_Screen);
-        //System.out.println("Screen : " + topLeftCoor_Screen[0] + " / " + topLeftCoor_Screen[1]);
-
-        // AVEC WINDOW AU LIEU DE SCREEN
-        int topLeftCoor_Window[] = new int[2];
-        Layout.getLocationInWindow(topLeftCoor_Window);
-        //System.out.println("Window : " + topLeftCoor_Window[0] + " / " + topLeftCoor_Window[1]);
-
-        // On récupère la hauteur de l'écran
+        int topLeft[] = new int[2];
+        //Layout.getLocationOnScreen(topLeft);
+        Layout.getLocationInWindow(topLeft);
         int layoutHeight = Layout.getHeight();
-        //System.out.println("Height : " + layoutHeight);
 
-        // On en déduit les coordonnées verticaux de la zone de jeu, ceux à ne jamais dépasser
-        int yMin = topLeftCoor_Window[1];
-        int yMax = topLeftCoor_Window[1] + layoutHeight;
-        //System.out.println("yMin est " + yMin + " et yMax est " + yMax);
+        int yMin = topLeft[1];
+        int yMax = topLeft[1] + layoutHeight;
 
+        intent.putExtra("yMinimum", yMin);
+        intent.putExtra("yMaximum", yMax);
+        intent.putExtra("layoutHeight", layoutHeight);
 
-        // On passe les deux valeurs dans notre intent
-        game.putExtra("yMinimum", yMin);
-        game.putExtra("yMaximum", yMax);
-        game.putExtra("layoutHeight", layoutHeight);
-        game.putExtra("id", "deruyter");
-
-        // On démarre la nouvelle activité en ayant envoyé les valeurs yMin et yMax
-        startActivity(game);
+        return intent;
     }
+
+
+
+
+
+
+
+
+
+
+
 
     /*@Override
     protected void onCreate(Bundle savedInstanceState) {
