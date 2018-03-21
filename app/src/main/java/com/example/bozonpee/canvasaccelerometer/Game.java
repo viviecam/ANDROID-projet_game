@@ -44,30 +44,33 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     /**
      * Le score du joueur.
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see Game#characterMeetsPlatform(int, int)
+     * @see Game#isGameOver()
      */
     private int score;
 
     /**
      * Le Canvas dans lequel on dessine nos éléments.
      *
-     * @see Game#
      */
     private Game.CanvasView canvas;
 
 
     // IMAGES
     /**
-     * L'image utilisée pour le fonc.
+     * L'image utilisée pour le fond.
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see CanvasView#onDraw(Canvas)
      */
     private Bitmap backgroundImg;
 
     /**
      * L'image utilisée pour une plateforme.
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see CanvasView#onDraw(Canvas)
      */
     private Bitmap plateformImg;
 
@@ -76,33 +79,35 @@ public class Game extends AppCompatActivity implements SensorEventListener {
      * <p>Largeur de l'image : 100</p>
      * <p>Hauteur de l'image : 30</p>
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see CanvasView#onDraw(Canvas)
      */
     private Bitmap jackImg;
 
     /**
      * <p>L'id de l'image qui sera utilisée pour Jack, récupérée depuis les autres activitées.</p>
-     * <p>Largeur de l'image : 64</p>
-     * <p>Hauteur de l'image : 100</p>
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
      */
     private String idImgJack;
-
 
 
     // LES PLATEFORMES
     /**
      * La liste plateforms, composée de Plateform.
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
+     * @see Game#characterMeetsPlatform(int, int)
+     * @see CanvasView#onDraw(Canvas)
      */
     private List<Plateform> plateforms;
 
     /**
      * Le nombre de Plateform à générer.
      *
-     * @see Game#
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
+     * @see Game#hasJumpedOnPlateform(int)
      */
     private int nbPlatforms;
 
@@ -111,28 +116,32 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     /**
      * La coordonnée X minimum de la zone de jeu (à gauche).
      *
-     * @see Game#
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
+     * @see Game#hasJumpedOnPlateform(int)
      */
     private int minX = 0; // car on part toujours du bord gauche de l'écran
 
     /**
      * La coordonnée X maximum de la zone de jeu (à droite).
      *
-     * @see Game#
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
+     * @see Game#hasJumpedOnPlateform(int)
      */
     private int maxX;
 
     /**
      * La coordonnée Y minimum de la zone de jeu (en haut).
      *
-     * @see Game#
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
+     * @see Game#hasJumpedOnPlateform(int)
      */
     private int minY;
 
     /**
      * La coordonnée X maximum de la zone de jeu (en bas).
      *
-     * @see Game#
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
+     * @see Game#hasJumpedOnPlateform(int)
      */
     private int maxY;
 
@@ -148,35 +157,41 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     /**
      * La position de Jack sur l'axe Y
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see CanvasView#onDraw(Canvas)
+     * @see Game#moveJackX()
      */
     private int jackY;
 
     /**
      * Le "pas" du rebond de Jack, initialisé en négatif pour qu'il commence par monter.
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see CanvasView#onDraw(Canvas)
      */
     private int dir_y = -15;
 
     /**
      * La hauteur du saut de Jack.
      *
-     * @see Game#
+     * @see CanvasView#onDraw(Canvas)
      */
     private int jumpHeight;
 
     /**
      * Le point de départ du saut de Jack, sur l'axe X
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see CanvasView#onDraw(Canvas)
      */
     private int startingPointJumpY;
 
     /**
      * Le boolean qui indique si Jack est en train de descendre.
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see CanvasView#onDraw(Canvas)
+     * @see Game#hasJumpedOnPlateform(int)
      */
     private boolean isGoingDown;
 
@@ -189,39 +204,31 @@ public class Game extends AppCompatActivity implements SensorEventListener {
      */
     private float sensorX;
     /**
-     * Le timer. ?
-     *
-     * @see Game#
-     */
-    //private Timer timer;
-    /**
      * Le handler. ?
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
+     * @see Game#moveJackX()
      */
     private Handler handler;
     /**
      * Le SensorManager ?
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
      */
     private SensorManager sensorManager;
     /**
      * L'accelerometer. ?
      *
-     * @see Game#
+     * @see Game#onCreate(Bundle)
      */
     private Sensor accelerometer;
 
     /**
      * L'instant où le Sensor à été mis à jour pour la dernière fois. ?
      *
-     * @see Game#
+     * @see Game#onSensorChanged(SensorEvent)
      */
     private long lastSensorUpdateTime = 0;
-
-
-
 
 
     /**
@@ -238,6 +245,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
      * <p>Puis immédiatement invalide le Canvas, ce qui déclenche l'appel de la fonction onDraw()??</p>
      *
      * @param savedInstanceState
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,14 +333,8 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     }
 
 
-
     /**
      * Class CanvasView.
-     * <p>C'est ici que s'affiche les éléments.</p>
-     * <p>C'est ici que s'affiche les éléments.</p>
-     * <p>C'est ici que s'affiche les éléments.</p>
-     * <p>C'est ici que s'affiche les éléments.</p>
-     * <p>C'est ici que s'affiche les éléments.</p>
      * <p>C'est ici que s'affiche les éléments.</p>
      *
      * @see Game#moveJackX()
@@ -349,9 +351,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
          * Constructeur CanvasView.
          *
          * @param context
-         *
          * @see Plateform#
-         *
          */
         public CanvasView(Context context) {
             super(context);
@@ -371,7 +371,8 @@ public class Game extends AppCompatActivity implements SensorEventListener {
          * <p>Invalide le Canvas pour relancer immédiatement onDraw()</p>
          *
          * @param screen
-         *
+         * @see Game#characterMeetsPlatform(int, int)
+         * @see Game#hasJumpedOnPlateform(int)
          */
         public void onDraw(Canvas screen) {
             // DESSIN DU FOND
@@ -432,30 +433,19 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     }
 
 
-
-
-
-
     /**
      * Méthode appelée pour générer aléatoirement des coordonnées de Plateform
-     *
+     * <p>
      * <p>Génère des nombres randomX et randomY.</p>
      * <p>Parcours la liste de plateforms locale. Vérifie s'il n'y à pas déj une plateforme avec des coordonnées en commun</p>
      *
-     * @param nbPlatforms
-     *            Le nombre de plateforme à générer.
-     * @param minX
-     *            La coordonnée X minimum de la zone où générer les plateformes.
-     * @param minY
-     *            La coordonnée Y minimum de la zone où générer les plateformes.
-     * @param maxX
-     *            La coordonnée X maximum de la zone où générer les plateformes.
-     * @param maxY
-     *            La coordonnée Y maximum de la zone où générer les plateformes.
-     *
+     * @param nbPlatforms Le nombre de plateforme à générer.
+     * @param minX        La coordonnée X minimum de la zone où générer les plateformes.
+     * @param minY        La coordonnée Y minimum de la zone où générer les plateformes.
+     * @param maxX        La coordonnée X maximum de la zone où générer les plateformes.
+     * @param maxY        La coordonnée Y maximum de la zone où générer les plateformes.
      * @return listeProvisoire
-     *            La liste des Plateform générées.
-     *
+     * La liste des Plateform générées.
      */
 
     public List<Plateform> generatePlateformsPositions(int nbPlatforms, int minX, int minY, int maxX, int maxY) {
@@ -524,19 +514,15 @@ public class Game extends AppCompatActivity implements SensorEventListener {
 
     /**
      * Méthode appelée si Jack a rebondi sur une plateforme,
-     *
+     * <p>
      * <p>Parcours la liste plateforms</p>
      * <p>Vérifie si la position de Jack coincide avec une plateforme</p>
      * <p>Si oui, change valeur du point de départ du saut newStartingPointForJump et ajoute 1 au score.</p>
      *
-     * @param Xjack
-     *            La position de Jack sur l'axe X.
-     * @param Yjack
-     *            La position de Jack sur l'axe Y.
-     *
+     * @param Xjack La position de Jack sur l'axe X.
+     * @param Yjack La position de Jack sur l'axe Y.
      * @return newStartingPointForJump
-     *            La coordonnée Y du nouveau point de départ du saut de Jack.
-     *
+     * La coordonnée Y du nouveau point de départ du saut de Jack.
      */
     public int characterMeetsPlatform(int Xjack, int Yjack) {
         int newStartingPointForJump = -10;
@@ -546,7 +532,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             int yPlatform = currentPlatform.getPlateformY();
             //On vérifie si le point en bas à gauche de jack (Y+100)
             if ((Yjack + 100) >= yPlatform && (Yjack + 100) < (yPlatform + 15)
-                    && Xjack >= (xPlatform - 64) && Xjack <= (xPlatform + 136)                     ) {
+                    && Xjack >= (xPlatform - 64) && Xjack <= (xPlatform + 136)) {
                 // On considère que jack rebondi si il a au moins la moitié de son corps sur la platform,
                 // d'ou - 64 à gauche et +200 - 64 à droite (valeurs de taille doublées)
                 newStartingPointForJump = yPlatform;
@@ -561,10 +547,9 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     }
 
 
-
     /**
      * Méthode appelée à chaque onDraw, pour vérifier si Jack touche une plateforme
-     *
+     * <p>
      * <p>Calcule la différence heightDif entre le bas de la zone de jeu, et la coordonnée de la Plateform sur laquelle Jack a rebondi.</p>
      * <p>Parcours la liste plateforms</p>
      * <p>Si la Plateform courante est en dessous de celle du rebond, elle est effacée, et ajoute 1 au nombre de Plateform effacées.</p>
@@ -572,9 +557,8 @@ public class Game extends AppCompatActivity implements SensorEventListener {
      * <p>Applique la différence à Jack.</p>
      * <p>Appelle generatePlateformsPositions() avec de nouveau paramètre nbPlateforms et de zone.</p>
      *
-     * @param YplatformJumped
-     *            La coordonnée Y de la Plateform sur laquelle Jack a rebondi.
-     *
+     * @param YplatformJumped La coordonnée Y de la Plateform sur laquelle Jack a rebondi.
+     * @see Game#generatePlateformsPositions(int, int, int, int, int)
      */
     public void hasJumpedOnPlateform(int YplatformJumped) {
         //Ligne de base définie à 360
@@ -605,21 +589,18 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         //startingPointJumpY = startingPointJumpY + heightDif -360 ;
 
         // Puis on veut générer de nouvelles plateformes sur toute la zone de jeu, avec un nbPlatforms fixe
-        plateforms = generatePlateformsPositions(5, minX, minY, maxX, maxY-360);
+        plateforms = generatePlateformsPositions(5, minX, minY, maxX, maxY - 360);
         // Puis on veut générer de nouvelles plateformes sur la zone en haut de l'écran qui vient d'apparaitre
         //plateforms = generatePlateformsPositions(nbPlateformsDeleted, minX, minY, maxX, minY+heightDif-360);
 
     }
 
 
-
     /**
      * Méthode appelée lorsque l'utilisateur perd (lorsqu'il fait tomber Jack hors de l'écran en bas.
-     *
+     * <p>
      * <p>Créé un intent. Lui ajoute la valeur du score.</p>
      * <p>Démarre l'activité Result, en lui passant l'Intent result </p>
-     *
-     *
      */
     public void isGameOver() {
         Intent result = new Intent(this, Result.class);
@@ -630,8 +611,6 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         // On démarre la nouvelle activité Result
         startActivity(result);
     }
-
-
 
 
     /**
@@ -668,15 +647,14 @@ public class Game extends AppCompatActivity implements SensorEventListener {
      * @param i
      */
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) { }
+    public void onAccuracyChanged(Sensor sensor, int i) {
+    }
 
 
     /**
      * Méthode appelée à chaque changement sur le Sensor, dans l'intervalle définie dans onSensorChanged().
      * <p>Définie des paliers sur les valeurs de sensorX.</p>
      * <p>Modifie la valeur de jackX</p>
-     *
-     *
      */
     public void moveJackX() {
         // Paliers en fonction de l'inclinaison que donne l'user sur le device
